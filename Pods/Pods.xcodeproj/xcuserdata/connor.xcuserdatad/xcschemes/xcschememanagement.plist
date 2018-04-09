@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>MASShortcut.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-QuickScreenGrab.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-QuickScreenGrabTests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-QuickScreenGrabUITests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>38B3ED2397A3B5C195ED679313312DA9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6080FE882FDFB812E2F539673EC2940E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9DEEDD64E8A1307038C7AAC6E0EAF3BB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D3B9F44EC23C1F7C4BC9F6E6EAE5DFA0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
