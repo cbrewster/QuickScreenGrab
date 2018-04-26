@@ -17,17 +17,18 @@ class ScreenGrabManager: NSObject, NSWindowDelegate {
     
     override init() {
         super.init()
+        print("Init")
         
-        let statusBar = NSStatusBar.systemStatusBar()
-        let crosshair = NSImage(named: "StatusIcon")
-        crosshair?.size = NSSize(width: 15, height: 15)
+        let statusBar = NSStatusBar.system
+        let crosshair = #imageLiteral(resourceName: "StatusIcon")
+        crosshair.size = NSSize(width: 15, height: 15)
         
         menu = NSMenu()
-        let item = NSMenuItem(title: "Quit", action: Selector("quit"), keyEquivalent: "")
+        let item = NSMenuItem(title: "Quit", action: #selector(self.quit), keyEquivalent: "")
         item.target = self
         menu?.addItem(item)
         
-        statusBarButton = statusBar.statusItemWithLength(NSVariableStatusItemLength)
+        statusBarButton = statusBar.statusItem(withLength: NSStatusItem.variableLength)
         statusBarButton?.image = crosshair
         statusBarButton?.highlightMode = true
         statusBarButton?.menu = menu
@@ -35,34 +36,30 @@ class ScreenGrabManager: NSObject, NSWindowDelegate {
         registerHotkey()
     }
     
-    func quit() {
+    @objc func quit() {
         NSApp.terminate(self)
     }
     
     func registerHotkey() {
-        
-        let shortcut = MASShortcut(keyCode: UInt(kVK_ANSI_5), modifierFlags: NSEventModifierFlags.CommandKeyMask.rawValue | NSEventModifierFlags.ShiftKeyMask.rawValue)
-        MASShortcutMonitor.sharedMonitor().registerShortcut(shortcut, withAction: {
+        let shortcut = MASShortcut(keyCode: UInt(kVK_ANSI_5), modifierFlags: NSEvent.ModifierFlags.command.rawValue | NSEvent.ModifierFlags.shift.rawValue)
+        MASShortcutMonitor.shared().register(shortcut, withAction: {
             self.takeScreenShot()
         })
     }
     
     func takeScreenShot() {
         guard let screengrab = NSImageFromScreen() else {
-            print("Failed to get screenshot")
             return
         }
         
-        let mouseLoc = NSEvent.mouseLocation()
+        let mouseLoc = NSEvent.mouseLocation
         
         let windowLoc = NSRect(x: mouseLoc.x - screengrab.size.width / 2.0, y: mouseLoc.y - screengrab.size.height - 10, width: screengrab.size.width, height: screengrab.size.height)
-        
-        let panel = NSPanel(contentRect: windowLoc, styleMask: NSHUDWindowMask | NSUtilityWindowMask | NSNonactivatingPanelMask | NSClosableWindowMask | NSTitledWindowMask, backing: NSBackingStoreType.Buffered, `defer`: false)
-        
+        let panel = NSPanel(contentRect: windowLoc, styleMask: [.hudWindow, .utilityWindow, .nonactivatingPanel, .closable, .titled], backing: .buffered, defer: false)
         panels.append(panel)
-        let imageView = NSImageView(frame: NSRect(origin: CGPointZero, size: screengrab.size))
+        let imageView = NSImageView(frame: NSRect(origin: CGPoint.zero, size: screengrab.size))
         imageView.image = screengrab
-        panel.contentView.addSubview(imageView)
+        panel.contentView?.addSubview(imageView)
         panel.delegate = self
         panel.makeKeyAndOrderFront(self)
     }
@@ -70,22 +67,27 @@ class ScreenGrabManager: NSObject, NSWindowDelegate {
     func NSImageFromScreen() -> NSImage? {
         // Use built in screen capture tool to grab screenshot
         // Copies screenshot to clipboard
-        let task = NSTask()
+        let task = Process()
         task.arguments = ["-ic"]
         task.launchPath = "/usr/sbin/screencapture"
         task.launch()
         task.waitUntilExit()
         
+        // If the screen capture was cancelled, the status code will be 1
+        if (task.terminationStatus == 1) {
+            return nil
+        }
+        
         // Grab screenshot from clipboard
-        let imageFromClipboard = NSImage(pasteboard: NSPasteboard.generalPasteboard())
+        let imageFromClipboard = NSImage(pasteboard: NSPasteboard.general)
         
         return imageFromClipboard
     }
     
     func windowShouldClose(sender: AnyObject) -> Bool {
-        let index = panels.indexOf(sender as! NSPanel)
+        let index = panels.index(of: sender as! NSPanel)
         if let index = index {
-            panels.removeAtIndex(index)
+            let _ = panels.remove(at: index)
         }
         
         return true
